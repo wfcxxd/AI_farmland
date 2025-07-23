@@ -44,14 +44,15 @@ header a1 {
   position: absolute;
   bottom: 40px;
   right: 0;
-  width: 1750px;
-  height: calc(100vh - 125px - 40px);
-  background-image: url('images/index.PNG');
+  width: 100%;                 /* 改成100%宽度 */
+  max-width: 1750px;           /* 限制最大宽度，避免超大 */
+  height: auto;                /* 高度自适应 */
+  max-height: calc(100vh - 125px - 40px); /* 限制最大高度 */
   background-repeat: no-repeat;
   background-position: right bottom;
-  background-size: contain; 
+  background-size: contain;
   opacity: 0.8;
-  z-index: 0; 
+  z-index: 0;
   pointer-events: none;
 }
 
