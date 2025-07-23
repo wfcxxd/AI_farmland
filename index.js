@@ -243,7 +243,10 @@ async function updateDetailsDataOnly() {
       }
     }
   } catch (err) {
-    console.error('更新详细数据失败', err);
+      container.querySelectorAll(':not(.blur-layer)').forEach(el => el.remove());
+      const errorEl = document.createElement('p');
+      errorEl.textContent = `加载数据失败：${err.message}`;
+      container.appendChild(errorEl);
   }
 }
 
@@ -386,8 +389,10 @@ async function showHistoryData() {
     renderFilterControls(data);
     renderPaginatedTable(data);
   } catch (error) {
-    container.insertAdjacentHTML('beforeend', `<p>获取历史数据失败：${error.message}</p>`);
-    console.error('获取历史数据失败：', error);
+    container.querySelectorAll(':not(.blur-layer)').forEach(el => el.remove());
+      const errorEl = document.createElement('p');
+      errorEl.textContent = `获取历史数据失败：${err.message}`;
+      container.appendChild(errorEl);
   }
 }
 
