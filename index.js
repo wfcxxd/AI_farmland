@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const navLinks = document.querySelectorAll('.content a');
   const savedId = localStorage.getItem('activeMenu');
 
+  const container = document.querySelector('.main-data');
+  if (!container.querySelector('.blur-layer')) {
+    const blurDiv = document.createElement('div');
+    blurDiv.className = 'blur-layer';
+    container.appendChild(blurDiv);
+  }
+
   navLinks.forEach(link => {
     const id = link.getAttribute('data-id');
 
@@ -389,10 +396,11 @@ async function showHistoryData() {
     renderFilterControls(data);
     renderPaginatedTable(data);
   } catch (error) {
-    container.querySelectorAll(':not(.blur-layer)').forEach(el => el.remove());
+      container.querySelectorAll(':not(.blur-layer)').forEach(el => el.remove());
       const errorEl = document.createElement('p');
-      errorEl.textContent = `获取历史数据失败：${err.message}`;
+      errorEl.textContent = `获取历史数据失败：${error.message}`;
       container.appendChild(errorEl);
+      console.error('获取历史数据失败：', error);
   }
 }
 
