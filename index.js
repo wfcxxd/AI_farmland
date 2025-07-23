@@ -183,7 +183,10 @@ async function showDetails() {
     });
 
   } catch (err) {
-    container.innerHTML = `<p>加载数据失败：${err.message}</p>`;
+      container.querySelectorAll(':not(.blur-layer)').forEach(el => el.remove());
+      const errorEl = document.createElement('p');
+      errorEl.textContent = `加载数据失败：${err.message}`;
+      container.appendChild(errorEl);
   }
 }
 
