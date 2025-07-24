@@ -1,0 +1,58 @@
+.settings-group{
+  margin-bottom:16px;
+}
+.settings-group label{
+  display:flex; 
+  align-items:center;
+  font-weight:bold; 
+  gap:12px;
+  font-size:16px;
+  color: var(--text-color);
+}
+.settings-group input[
+  type="number"
+  ],
+.settings-group select{
+  width:100px; 
+  padding:6px 8px;
+  font-size:14px; 
+  border:1px solid #aaa;
+  border-radius:4px; 
+  outline:none;
+  transition:border-color .3s ease;
+}
+.settings-group input[type="number"]:focus,
+.settings-group select:focus{
+  border-color:#2f4f4f;
+}
+
+.reset-btn{
+  margin-left:8px; 
+  padding:4px 10px; 
+  cursor:pointer;
+  background-color:#eee; 
+  border:1px solid #ccc;
+  border-radius:4px; 
+  font-size:13px;
+  transition:background-color .3s ease;
+}
+.reset-btn:hover{ 
+  background-color:#c7d4cb; 
+}
+
+#saveSettingsBtn,
+#resetAllBtn{
+  padding:10px 24px; 
+  font-size:16px; 
+  font-weight:bold;
+  color:white; 
+  background-color:#2f4f4f;
+  border:none; 
+  border-radius:6px; 
+  cursor:pointer;
+  transition:background-color .3s ease;
+}
+#saveSettingsBtn:hover,
+#resetAllBtn:hover{ 
+  background-color:#25503d; 
+}

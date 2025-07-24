@@ -1,0 +1,75 @@
+/* 布局容器 */
+.home-grid {
+  display: grid;
+  grid-template-areas:
+    "top-left top-right"
+    "bottom bottom";
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.page-home .main-data {
+  background: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 40px 20px !important;
+  overflow: visible !important;
+}
+
+
+/* 每个区块通用样式 */
+.home-block {
+  background: rgba(255, 255, 255, 0.25);         /* 半透明背景 */
+  backdrop-filter: blur(10px);                  /* 模糊增强 */
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);      /* 增强层次感 */
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 180px;
+  max-height: 280px;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  color: #222;                                   /* 提高文字对比度 */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* 指定区域 */
+.block-1 { grid-area: top-left; width: 100%; }
+.block-2 { grid-area: top-right; width: 100%; }
+.block-3 { grid-area: bottom; grid-column: span 2; width: 100%; }
+
+/* 区块标题 */
+.home-block h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #558a8a;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+#currentTime{
+  font-size:14px;
+  color:#5c5c5c;
+  margin-top:8px;
+}
+
+
+@media (max-width: 768px) {
+  .home-grid {
+    grid-template-areas:
+      "top-left"
+      "top-right"
+      "bottom";
+    grid-template-columns: 1fr;
+  }
+  .block-3 {
+    grid-column: auto;
+  }
+}

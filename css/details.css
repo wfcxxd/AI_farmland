@@ -1,0 +1,73 @@
+.main-data {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;        /* KEY: 允许子项正确计算高度 */
+}
+
+/* 下拉框、标题等不滚动 */
+#sensor-select,
+#sensor-title,
+#sensor-select + hr {
+  flex: 0 0 auto;
+}
+
+/* ★ 让图表区自己滚动 */
+.charts-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;   /* 横向没必要滚就隐藏，有需求可改成 auto */
+  min-height: 0;        /* KEY */
+  padding-bottom: 20px;
+}
+
+/* 图表行与包裹容器 */
+.charts-row{
+  display:flex; justify-content:center;
+  gap:175px; flex-wrap:wrap;
+  margin-bottom:150px; position:relative; z-index:1;
+  margin-top:40px;
+}
+.chart-wrapper{
+  background-color: #fff;
+  flex:0 0 40%;
+  height:195px; max-width:500px;
+  box-sizing:border-box;
+  position:relative; z-index:1;
+  margin:0 10px 20px;
+}
+.chart-wrapper > div:first-child{
+  font-weight:bold; margin-bottom:10px;
+  text-align:center; width:100%; display:block;
+}
+
+/* 画布尺寸 */
+.chart-wrapper canvas,
+.chart-wrapper table{
+  width:100% !important;
+  height:auto !important;
+  display:block;
+}
+
+/* 传感器选择框 */
+#sensor-select{
+  font-size:16px; 
+  padding:8px 12px;
+  border-radius:6px; 
+  border:1px solid #888;
+  background-color: #fff;;
+  color: #000;
+}
+#sensor-select:focus{
+  border-color:#2f4f4f;
+  box-shadow:0 0 5px rgba(47,79,79,.5);
+}
+
+canvas {
+  background-color: transparent !important;
+}
+
+/* 响应式：小屏一列 */
+@media (max-width:500px){
+  .chart-background img{ max-width:100%; opacity:.6; }
+  .chart-wrapper{ flex:1 1 100%; }
+}
