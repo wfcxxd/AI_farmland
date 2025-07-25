@@ -17,7 +17,9 @@ export async function showHistoryData(container) {
     renderFilterControls(container, data);
     renderPaginatedTable(container, data);
   } catch (err) {
-    container.innerHTML = `<p>获取历史数据失败：${err.message}</p>`;
+    const p = document.createElement("p");
+  p.textContent = "获取历史数据失败";
+  container.appendChild(p);
   }
 }
 

@@ -3,9 +3,9 @@ const images = [
   'images/bj1.PNG',
   'images/bj2.PNG',
   'images/bj3.PNG',
-  'images/bj4.JPG',
+  'images/bj4.PNG',
   'images/bj5.PNG',
-  'images/bj6.JPG'
+  'images/bj6.PNG'
 ];
 const selectedImage = images[Math.floor(Math.random() * images.length)];
 document.querySelector('.background').style.backgroundImage = `url('${selectedImage}')`;
