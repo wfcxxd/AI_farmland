@@ -6,20 +6,21 @@
   --anim: .25s ease;
 }
 
-main .main-background {
-  position: absolute;
+.main-background {
+  position: fixed;
   top: var(--header-h);
-  left: var(--sidebar-w);
+  left: 0;
   right: 0;
   bottom: var(--footer-h);
   background-image: url('../images/ww.PNG');
   background-size: cover;
-  background-position: center;
+  background-position: center center;
   background-repeat: no-repeat;
   opacity: 0.8;
   z-index: 0;
   pointer-events: none;
 }
+
 
 /* Reset & base */
 * { padding: 0; margin: 0; box-sizing: border-box; }
@@ -180,6 +181,7 @@ main{
   margin:0 auto;
   position:relative;
   z-index:1;
+  
 }
 .blur-layer{
   position:absolute; top:0; left:0; right:0; bottom:0;
@@ -225,7 +227,7 @@ main{
     top: 64px;
     left: 0;
     width: 100%;
-    height: 32px; /* 更薄导航条 */
+    height: 32px; 
     background-color: #a9a9a9;
     padding: 0;
     display: flex;
@@ -280,6 +282,12 @@ main{
   main {
     margin-left: 0;
     padding-top: calc(64px + 32px); /* 预留 header + nav 空间 */
+    padding-bottom: 22px;
+    height: 100vh;
+  }
+   .main-background {
+    top: 64px;
+    bottom:22px;
   }
 }
   

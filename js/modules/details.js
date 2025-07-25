@@ -7,7 +7,7 @@ export async function showDetails(container) {
   toRemove.forEach(el => el.remove());
 
   try {
-    const res = await fetch("http://127.0.0.1:9000/all_sensor_data");
+    const res = await fetch("http://1.95.210.241:9000/all_sensor_data");
     const data = await res.json();
 
     if (!Array.isArray(data)) {
@@ -137,7 +137,7 @@ export function stopDetailsAutoRefresh() {
 
 async function updateDetailsDataOnly() {
   try {
-    const res = await fetch("http://127.0.0.1:9000/all_sensor_data");
+    const res = await fetch("http://1.95.210.241:9000/all_sensor_data");
     const data = await res.json();
     if (!Array.isArray(data)) return;
 
