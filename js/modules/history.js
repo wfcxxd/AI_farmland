@@ -4,7 +4,7 @@ const rowsPerPage = 12;
 export async function showHistoryData(container) {
   container.querySelectorAll(":not(.blur-layer)").forEach((el) => el.remove());
   try {
-    const res = await fetch("https://1.95.210.241:9000/all_sensor_data");
+    const res = await fetch("https://1.95.210.241/all_sensor_data");
     const rawData = await res.json();
     const data = rawData.map((item) => ({
       sensor_name: item.sensor_id || item.sensor_name,
