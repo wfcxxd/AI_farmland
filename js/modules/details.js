@@ -137,7 +137,7 @@ export function stopDetailsAutoRefresh() {
 
 async function updateDetailsDataOnly() {
   try {
-    const res = await fetch("http://1.95.210.241:9000/all_sensor_data");
+    const res = await fetch("https://1.95.210.241/all_sensor_data");
     const data = await res.json();
     if (!Array.isArray(data)) return;
 
