@@ -10,13 +10,17 @@ input:focus {
   box-shadow: none;
 }
 
-
 /* 背景设置 */
 body, html {
   height: 100%;
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  position: relative;
 }
 
 .background {
@@ -32,43 +36,44 @@ body, html {
 
 /* 登录框样式 */
 .login-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 350px;
-  padding: 40px;
+  width: 90%;
+  max-width: 400px;
+  padding: 50px 100px;
   background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(6px);
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  text-align: center;
 }
 
+
 .login-container h2 {
-  text-align: center;
   margin-bottom: 30px;
+  font-size: clamp(20px, 5vw, 28px);
+  color: #333;
 }
 
 /* 表单样式 */
 input[type="text"],
 input[type="password"] {
-  width: 84%;
-  padding: 12px 40px 12px 12px;
+  width: 100%;
+  padding: 12px;
   margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
+  box-sizing: border-box;
 }
 
 /* 密码框 + 显示密码按钮 */
 .password-wrapper {
   position: relative;
-  width: 99.5%;
+  width: 100%;
 }
 
 .password-wrapper input {
   width: 100%;
-  padding-right: 40px; /* 预留给按钮的位置 */
+  padding-right: 40px;
   box-sizing: border-box;
 }
 
@@ -110,4 +115,26 @@ button[type="submit"] {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+@media (max-width: 500px) {
+  .login-container {
+    padding: 30px 20px;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  button[type="submit"] {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .toggle-password img {
+    width: 18px;
+    height: 18px;
+  }
 }

@@ -11,7 +11,7 @@ export async function showDetails(container) {
     const data = await res.json();
 
     if (!Array.isArray(data)) {
-      container.innerHTML += "<p>数据格式错误</p>";
+      container.innerHTML += "<p>请求数据失败</p>";
       return;
     }
 
