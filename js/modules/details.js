@@ -1,3 +1,4 @@
+import { API_BASE } from "./config.js";
 const chartsCache = {};
 let detailsTimer = null;
 let scrollHost = null;
@@ -7,7 +8,7 @@ export async function showDetails(container) {
   toRemove.forEach(el => el.remove());
 
   try {
-    const res = await fetch("http://1.95.210.241:9000/all_sensor_data")
+    const res = await fetch(`${API_BASE}/all_sensor_data`)
 ;
     const data = await res.json();
 
@@ -136,9 +137,19 @@ export function stopDetailsAutoRefresh() {
   }
 }
 
+let lastFetchTime = 0;
+const FETCH_INTERVAL = 3000;
+
 async function updateDetailsDataOnly() {
+  const now = Date.now();
+  if (now - lastFetchTime < FETCH_INTERVAL) {
+    console.warn("请求太频繁，已跳过");
+    return;
+  }
+  lastFetchTime = now;
+
   try {
-    const res = await fetch("http://1.95.210.241:9000/all_sensor_data")
+    const res = await fetch(`${API_BASE}/all_sensor_data`)
 ;
     const data = await res.json();
     if (!Array.isArray(data)) return;

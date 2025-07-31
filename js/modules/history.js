@@ -1,10 +1,11 @@
+import { API_BASE } from "./config.js";
 let currentPage = 1;
 const rowsPerPage = 12;
 
 export async function showHistoryData(container) {
   container.querySelectorAll(":not(.blur-layer)").forEach((el) => el.remove());
   try {
-    const res = await fetch("http://1.95.210.241:9000/all_sensor_data");
+    const res = await fetch(`${API_BASE}/all_sensor_data`);
     const rawData = await res.json();
     const data = rawData.map((item) => ({
       sensor_name: item.sensor_id || item.sensor_name,
