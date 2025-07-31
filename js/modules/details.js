@@ -287,7 +287,7 @@ function drawLineChart(canvasId, labels, data, label, borderColor, bgColor) {
         const ctx = chart.canvas.getContext("2d");
         ctx.save();
         ctx.globalCompositeOperation = "destination-over";
-        ctx.fillStyle = "rgba(0,0,0,0)";  // 完全透明
+        ctx.fillStyle = "rgba(99, 99, 99, 0.34)";  // 完全透明
         ctx.fillRect(0, 0, chart.width, chart.height);
         ctx.restore();
       }
