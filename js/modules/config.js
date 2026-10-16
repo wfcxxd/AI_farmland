@@ -3,6 +3,7 @@
  *
  * 全站所有取数都走这里，页面里不要再直接写 fetch。
  */
+import { mockFetch } from "./mock-api.js";
 
 /* ---------------------------------------------------------------
  * 可调参数
@@ -36,14 +37,40 @@ const isLocalPreview =
 export const API_BASE = isLocalPreview ? "" : PROD_API_BASE;
 
 /* ---------------------------------------------------------------
+ * 演示模式（前端模拟后端）
+ *
+ * 原后端已停服，而 GitHub Pages 是纯静态托管、没有服务端，
+ * 部署上去后页面会取不到数据。所以非 localhost 环境下默认改用
+ * 前端生成的数据，保证打开就有内容、且会随时间更新。
+ *
+ * 网址参数（可叠加在任意页面上）：
+ *   ?demo=1   强制开启模拟（本地开发时想验证也方便）
+ *   ?demo=0   强制关闭，去请求真实后端
+ * --------------------------------------------------------------- */
+const demoParam =
+  typeof location !== "undefined"
+    ? new URLSearchParams(location.search).get("demo")
+    : null;
+
+export const USE_MOCK =
+  demoParam === "0" || demoParam === "off"
+    ? false
+    : demoParam === "1" || demoParam === "on"
+      ? true
+      : !isLocalPreview;
+
+/* ---------------------------------------------------------------
  * 请求
  * --------------------------------------------------------------- */
 
 /**
  * 带超时的 GET，返回解析后的 JSON。
+ * 演示模式下直接返回本地生成的数据，不发网络请求。
  * @param {string} path 以 / 开头的接口路径
  */
 export async function fetchJSON(path, { timeout = NETWORK_CONFIG.timeout } = {}) {
+  if (USE_MOCK) return (await mockFetch(path)).json();
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
   try {
