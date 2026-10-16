@@ -1,58 +1,172 @@
-.settings-group{
-  margin-bottom:16px;
-}
-.settings-group label{
-  display:flex; 
-  align-items:center;
-  font-weight:bold; 
-  gap:12px;
-  font-size:16px;
-  color: var(--text-color);
-}
-.settings-group input[
-  type="number"
-  ],
-.settings-group select{
-  width:100px; 
-  padding:6px 8px;
-  font-size:14px; 
-  border:1px solid #aaa;
-  border-radius:4px; 
-  outline:none;
-  transition:border-color .3s ease;
-}
-.settings-group input[type="number"]:focus,
-.settings-group select:focus{
-  border-color:#2f4f4f;
+/* ===== 设置页 ===== */
+
+.settings-title{
+  margin: 0 0 18px;
+  font-size: 22px;
+  color: var(--text-color-strong);
 }
 
+/* 每个板块一张卡片，原来所有控件挤在左上角、下面留一大片空白 */
+.settings-card{
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  max-width: 720px;
+  transition: background-color .25s ease, border-color .25s ease;
+}
+.settings-card h3{
+  margin: 0 0 4px;
+  font-size: 16px;
+  color: var(--text-color-strong);
+}
+.settings-hint{
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: var(--muted-color);
+}
+
+/* 标签固定宽度 + 控件一栏，多行才对得齐 */
+.settings-group{
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.settings-card h3 + .settings-group{ margin-top: 0; }
+.settings-group > label{
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--label-color);
+}
+.settings-control{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.settings-control input[type="number"]{
+  width: 120px;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+/* ===== 主题选择卡片 ===== */
+.theme-picker{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.theme-card{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: var(--input-bg);
+  border: 2px solid var(--input-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.theme-card:hover{
+  transform: translateY(-2px);
+  border-color: var(--accent-strong);
+}
+.theme-card.is-selected{
+  border-color: #2f6f63;
+  box-shadow: 0 0 0 3px rgba(85,137,127,.28);
+}
+.theme-name{
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-color);
+  text-align: center;
+}
+
+/* 用纯 CSS 画的小预览图：顶栏 + 侧栏 + 内容块 */
+.theme-preview{
+  position: relative;
+  display: block;
+  height: 74px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,.15);
+}
+.theme-preview .tp-bar{
+  position: absolute; top: 0; left: 0; right: 0; height: 16px;
+  background: var(--brand);
+}
+.theme-preview .tp-side{
+  position: absolute; top: 16px; left: 0; bottom: 0; width: 26px;
+}
+.theme-preview .tp-block{
+  position: absolute; top: 24px; left: 34px; right: 8px; height: 22px;
+  border-radius: 4px;
+}
+/*
+ * 主题卡片里那个迷你界面缩略图。
+ *
+ * 这里是本文件里唯一「刻意写死色值」的地方：
+ * 它要同时画出浅色和深色两套配色（不管当前用的是哪套），
+ * 所以不能引用随主题变化的令牌，必须固定。
+ * 改主题配色时若想让缩略图跟上，需要同步改这里的四个值。
+ */
+.theme-preview-light{ background: #f4f7f6; }
+.theme-preview-light .tp-side{ background: #dfe5e3; }
+.theme-preview-light .tp-block{ background: #ffffff; border: 1px solid #d3dcda; }
+
+.theme-preview-dark{ background: #12161a; }
+.theme-preview-dark .tp-side{ background: #1a2225; }
+.theme-preview-dark .tp-block{ background: #232d31; border: 1px solid #333f43; }
+
+/* ===== 按钮 ===== */
 .reset-btn{
-  margin-left:8px; 
-  padding:4px 10px; 
+  padding:6px 12px; 
   cursor:pointer;
-  background-color:#eee; 
-  border:1px solid #ccc;
-  border-radius:4px; 
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border:1px solid var(--input-border);
+  border-radius:6px; 
   font-size:13px;
-  transition:background-color .3s ease;
+  transition:background-color .2s ease, border-color .2s ease;
 }
 .reset-btn:hover{ 
-  background-color:#c7d4cb; 
+  background-color: var(--row-hover);
+  border-color: var(--accent-strong);
 }
 
+.settings-actions{
+  display: flex;
+  gap: 12px;
+  max-width: 720px;
+  margin-top: 20px;
+}
 #saveSettingsBtn,
 #resetAllBtn{
   padding:10px 24px; 
-  font-size:16px; 
+  font-size:15px; 
   font-weight:bold;
   color:white; 
-  background-color:#2f4f4f;
   border:none; 
-  border-radius:6px; 
+  border-radius:8px; 
   cursor:pointer;
   transition:background-color .3s ease;
 }
-#saveSettingsBtn:hover,
-#resetAllBtn:hover{ 
-  background-color:#25503d; 
+#saveSettingsBtn{ background-color:var(--brand); }
+#saveSettingsBtn:hover{ background-color:var(--brand-hover); }
+#resetAllBtn{ background-color:var(--neutral); }
+#resetAllBtn:hover{ background-color:var(--neutral-hover); }
+
+/* 小屏：标签和控件各占一行 */
+@media (max-width:600px){
+  .settings-group{
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+  .theme-picker{ grid-template-columns: minmax(0, 1fr); }
+  .settings-actions{ flex-direction: column; }
+  #saveSettingsBtn, #resetAllBtn{ width: 100%; }
+  .settings-control input[type="number"]{ width: 100%; }
 }

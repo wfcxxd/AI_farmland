@@ -1,9 +1,87 @@
+/* ==========================================================================
+ * 分两层管理颜色，改配色只看这一段就够了
+ *
+ *   第一层 --palette-*  ：原始色板。只在这里写具体色值。
+ *   第二层 语义令牌      ：描述用途（主色/强调色/危险色…），引用第一层。
+ *
+ * 想换主色调？改 --palette-green-* 那几个值，全站跟着变。
+ * 想换警示色？改 --palette-danger。
+ * 各文件里一律用语义令牌，不要再写 #xxxxxx。
+ * ========================================================================== */
+
 :root{
   --header-h: 125px;
   --footer-h: 40px;
   --sidebar-w: clamp(140px, 18vw + 20px, 260px); /* 桌面侧栏宽度 */
   --sidebar-w-mobile: 80vw;                      /* 移动端展开宽度 */
+  --sidebar-edge: var(--sidebar-w);              /* 侧栏右边缘位置，收起时归零 */
   --anim: .25s ease;
+
+  /* ---------- 第一层：原始色板 ---------- */
+  --palette-green-900: #1f3a37;   /* 深绿最暗，按下态 / 深色强调 */
+  --palette-green-800: #24403d;   /* 侧栏选中文字 */
+  --palette-green-700: #25503d;   /* 主色悬停 */
+  --palette-green-600: #2f4f4f;   /* 主色：顶栏、深色按钮 */
+  --palette-green-500: #35595a;   /* 主色亮端（顶栏渐变起始） */
+  --palette-green-400: #2a4746;   /* 主色暗端（顶栏渐变结束） */
+  --palette-teal-500:  #557f76;   /* 强调色：卡片左边条、趋势 */
+  --palette-teal-400:  #55897f;   /* 强调色亮：输入框聚焦 */
+  --palette-teal-300:  #6f7f79;   /* 侧栏悬停 */
+  --palette-teal-200:  #9aa8a7;   /* 深色模式弱文字 */
+
+  --palette-gold-700: #8a6d14;    /* 金色文字（浅底上） */
+  --palette-gold-600: #ab8420;    /* 金条暗端 */
+  --palette-gold-500: #c9a227;    /* 金线基色 */
+  --palette-gold-400: #d8b23f;    /* 金条亮端 / 标题渐变收尾 */
+  --palette-gold-300: #d8b658;    /* 标题渐变 */
+  --palette-gold-200: #e8bb2e;    /* 顶栏金线（浅色模式） */
+  --palette-gold-100: #f0d98a;    /* 金角标 / 深色模式标题 */
+
+  --palette-danger:     #d9534f;  /* 危险 / 告警 */
+  --palette-danger-dim: #9c4a3c;  /* 危险按钮（柔和） */
+  --palette-danger-dark:#7d3a2f;  /* 危险按钮悬停 */
+  --palette-warn:       #e0a52a;  /* 警告（湿度偏低） */
+  --palette-warn-text:  #c08a1e;  /* 警告文字 */
+  --palette-ok:         #3f9d6d;  /* 正常 / 通过 */
+  --palette-link:       #4096ff;  /* 页脚链接悬停 */
+  --palette-neutral:    #7a8a86;  /* 中性按钮（恢复全部默认） */
+  --palette-neutral-dim:#68766f;
+
+  /* ---------- 第二层：语义令牌 ---------- */
+  /* 品牌主色 */
+  --brand: var(--palette-green-600);
+  --brand-hover: var(--palette-green-700);
+  --brand-dark: var(--palette-green-800);
+  /* 强调色 */
+  --accent: var(--palette-teal-500);
+  --accent-strong: var(--palette-teal-400);
+  /* 金色（顶栏金线、角标、选中标记） */
+  --gold: var(--palette-gold-500);
+  --gold-bright: var(--palette-gold-100);
+  --gold-deep: var(--palette-gold-700);
+  /* 状态色 */
+  --danger: var(--palette-danger);
+  --danger-soft: var(--palette-danger-dim);
+  --warn: var(--palette-warn);
+  --warn-text: var(--palette-warn-text);
+  --ok: var(--palette-ok);
+  --link-hover: var(--palette-link);
+  --neutral: var(--palette-neutral);
+  --neutral-hover: var(--palette-neutral-dim);
+
+  /* 兜底主题变量：即使主题还没生效也不会取到空值 */
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --box-bg: rgba(255, 255, 255, 0.6);
+  --title-gradient: linear-gradient(96deg,
+    #ffffff 0%, #fbfdfc 38%, #f4e7bd 68%, #e6cc84 85%, var(--palette-gold-300) 100%);
+  --header-gold: var(--palette-gold-200);
+  --header-gold-w: 4px;
+  --header-gold-glow: rgba(232, 187, 46, .45);
+  /* 侧栏交互色：light / dark 两套会各自覆盖，这里给个浅色模式的兜底 */
+  --sidebar-hover-bg: rgba(47, 79, 79, .10);
+  --sidebar-hover-text: var(--palette-green-900);
+  --sidebar-active-text: var(--palette-green-800);
 }
 
 .main-background {
@@ -26,7 +104,10 @@
 * { padding: 0; margin: 0; box-sizing: border-box; }
 
 header {
-  background-color:#2f4f4f;
+  /* 深绿微渐变，避免整块死板的纯色 */
+  background: linear-gradient(180deg, var(--palette-green-500) 0%, var(--brand) 62%, var(--palette-green-400) 100%);
+  /* 底部金线：呼应背景麦田的暖金色，把深绿和暖色背景接起来 */
+  border-bottom: var(--header-gold-w) solid var(--header-gold);
   height:125px;
   width:100%;
   position:fixed;
@@ -34,22 +115,84 @@ header {
   left:0;
   right:0;
   z-index:1000;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .22), 0 0 16px var(--header-gold-glow);
 }
 header h1 {
-  color: white;
+  /*
+   * 白 → 金 的渐变字，金色收尾呼应底部金线。
+   * 注意两个坑：
+   * 1) 必须用 width: max-content，否则渐变按盒宽算，
+   *    文字只占前面一半，会在字中间突然变金；
+   * 2) 金色段要留给末尾约 1/4，渐变才自然。
+   * 具体渐变值按主题走 --title-gradient。
+   */
+  width: max-content;
+  max-width: 62vw;
+  background-image: var(--title-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--palette-gold-100);      /* 不支持渐变字时的兜底色 */
   font-size: clamp(24px, 4vw + 8px, 48px);
+  font-weight: 700;
   white-space: nowrap;
   position: absolute;
   line-height: 125px;
   left: 100px;
-  background-image: url(images/logo.svg);
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 500px;
-  text-indent: -1px;
 }
-header a { color: gray; position: absolute; font-size: clamp(16px, 2.2vw + 2px, 28px); right: 10vw; top: 30px; }
-header a1{ color: gray; position: absolute; font-size: clamp(16px, 2.2vw + 2px, 28px); right: 6vw;  top: 60px; }
+/* 原来是两个自定义标签 <a>/<a1>，换成标准元素 */
+.header-quote {
+  position: absolute;
+  right: 8vw;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: right;
+  color: rgba(255, 255, 255, .62);
+  font-size: clamp(16px, 2.2vw + 2px, 28px);
+  line-height: 1.3;
+}
+.header-quote span { display: block; }
+
+/*
+ * 侧栏收起/展开按钮。
+ * 定位在侧栏底部右边缘，做成一枚很淡的窄页签：
+ * 平时几乎融进侧栏，鼠标移上去才显出来。
+ * 收起后侧栏移出屏幕，只剩这条窄页签贴在左边，用来展开。
+ */
+#sidebar-toggle {
+  position: fixed;
+  left: var(--sidebar-edge);
+  top: calc(100vh - var(--footer-h) - 46px);
+  transform: translateY(-50%);
+  z-index: 1200;
+  width: 15px;
+  height: 42px;
+  padding: 0;
+  font-size: 11px;
+  line-height: 1;
+  border: 1px solid var(--sidebar-border);
+  border-left: none;
+  border-radius: 0 7px 7px 0;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  opacity: .3;
+  cursor: pointer;
+  /*
+   * 注意：这里绝对不能写 transition: left。
+   * 实测一旦加成过渡，会残留一个 progress=0 的动画把 left 锁死在初值上
+   * （连内联 left 都盖不过去），收起侧栏后按钮仍停在原来的边缘位置。
+   * 侧栏本身已有宽度动画，按钮跟着走即可，不需要再过渡。
+   */
+  transition: opacity .2s ease, background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+/* 鼠标停在自己身上才点亮（侧栏整体 hover 会让它一直亮着，太跳） */
+#sidebar-toggle:hover,
+#sidebar-toggle:focus-visible {
+  opacity: 1;
+  background: var(--brand);
+  color: var(--palette-gold-100);
+  border-color: var(--brand);
+}
 
 .content{
   position: fixed;
@@ -58,31 +201,51 @@ header a1{ color: gray; position: absolute; font-size: clamp(16px, 2.2vw + 2px, 
   width: var(--sidebar-w);
   height: calc(100vh - var(--header-h) - var(--footer-h));
   overflow-y: auto;
-  background-color: #a9a9a9;
+  /* 浅色微渐变，和顶部栏呼应 */
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
   z-index: 1100;                   /* 必须高于遮罩 */
-  transition: width var(--anim), transform var(--anim);
+  transition: width var(--anim), transform var(--anim), background-color .25s ease;
+  /* 底部留出收起按钮的位置，免得挡住最后一项 */
+  padding-bottom: 76px;
 }
 .content ul{ list-style:none; margin:0; padding:0; }
-.content li{ background-color:#a9a9a9; margin:0; padding:0; border-radius:0; box-shadow:none; }
+.content li{ background:transparent; margin:0; padding:0; border-radius:0; box-shadow:none; }
 .content a{
   display:flex; 
   justify-content:center; 
   align-items:center;
   height:50px; 
   width:100%;
-  color:var(--text-color); 
+  color:var(--sidebar-text); 
   font-weight:normal; 
   text-decoration:none;
-  background-color:#a9a9a9; 
+  background:transparent; 
   cursor:pointer; 
   user-select:none;
-  transition:background-color .3s ease;
+  position: relative;
+  transition:background-color .3s ease, color .3s ease;
 }
-.content a.active{ background-color:#6f7f79; color:#fff; font-weight:bold; }
-.content a:hover{ background-color:#8c9a95; color:#fff; }
+/* 选中项：淡底 + 左侧金色竖条（不用圆点） */
+.content a.active{
+  background: linear-gradient(90deg, rgba(201,162,39,.15) 0%, rgba(201,162,39,.03) 60%, transparent 100%);
+  color: var(--sidebar-active-text);
+  font-weight: 700;
+}
+.content a.active::before{
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  /* 比顶部金线稍收一点，主次分明 */
+  background: linear-gradient(180deg, var(--palette-gold-400), var(--palette-gold-600));
+}
+.content a:hover{ background-color: var(--sidebar-hover-bg); color: var(--sidebar-hover-text); }
 
 body.sidebar-collapsed{
   --sidebar-w: 0px;
+  /* 侧栏收起后，收起按钮要跟着贴到最左边，否则会停在原来的边缘上 */
+  --sidebar-edge: 0px;
 }
 body.sidebar-collapsed .content{
   width: 0;
@@ -90,52 +253,140 @@ body.sidebar-collapsed .content{
   overflow: hidden;
 }
 
-#sidebar-toggle{
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .2s ease;
-}
-
-#sidebar-toggle{
-  position: absolute;
-  left: 16px; top: 16px;
-  z-index: 1100;
-  width: 36px; height: 36px;
-  font-size: 24px;
-  line-height: 36px;
-  border: none;
-  background: transparent;
-  color: #fff;
-  cursor: pointer;
-}
-
 body.sidebar-collapsed #sidebar-toggle{
+  left: 0;
   opacity: 1;
-  pointer-events: auto;
 }
 
 /*-----------主题---------*/
-body.theme-light {
+html[data-theme="light"] {
   --bg-color: #ffffff;
   --text-color: #000000;
   --box-bg: rgba(255, 255, 255, 0.6);
+
+  /* 扩展令牌：表单、表格、文字层级 */
+  --text-color-strong: #1a2b2b;
+  --label-color: #2f3a3a;
+  --muted-color: #5f6d6d;
+  --card-bg: rgba(255, 255, 255, 0.92);
+  --card-border: rgba(47, 79, 79, 0.16);
+  --card-shadow: 0 8px 24px rgba(40, 60, 60, 0.16);
+  --input-bg: #ffffff;
+  --input-border: #b9c4c4;
+  --input-text: #16211f;
+  --thead-bg: var(--brand);
+  --thead-text: #ffffff;
+  --row-hover: rgba(47, 79, 79, 0.09);
+  --row-stripe: rgba(47, 79, 79, 0.04);
+  --sidebar-bg: linear-gradient(180deg, #eaeff0 0%, #dde4e3 55%, #d5dedc 100%);
+  --sidebar-border: rgba(47, 79, 79, 0.14);
+  --sidebar-text: #2b3a3a;
+  /* 侧栏项悬停 / 选中：浅色模式下用深绿系 */
+  --sidebar-hover-bg: rgba(47, 79, 79, .10);
+  --sidebar-hover-text: var(--palette-green-900);
+  --sidebar-active-text: var(--palette-green-800);
+  /* 顶部标题的白→金渐变（浅色模式金色可以饱满一些） */
+  --title-gradient: linear-gradient(96deg,
+    #ffffff 0%, #fbfdfc 38%, #f4e7bd 68%, #e6cc84 85%, var(--palette-gold-300) 100%);
+  --blur-layer-bg: rgba(232, 236, 234, 0.55);
+  --tooltip-bg: rgba(28, 38, 38, 0.92);
+  --bg-image-filter: saturate(1.05) brightness(1);
+  --bg-image-opacity: 0.8;
 }
 
-body.theme-dark {
-  --bg-color: #1e1e1e;
-  --text-color: #ffffff;
-  --box-bg: rgba(50, 50, 50, 0.8);
+html[data-theme="dark"] {
+  --bg-color: #12161a;
+  --text-color: #eef3f2;
+  --box-bg: rgba(28, 36, 40, 0.88);
+
+  --text-color-strong: #ffffff;
+  --label-color: #cfd8d7;
+  --muted-color: #9aa8a7;
+  --card-bg: rgba(26, 33, 37, 0.9);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+  --input-bg: #1e2629;
+  --input-border: #3d4a4e;
+  --input-text: #eef3f2;
+  --thead-bg: #1b2427;
+  --thead-text: #cfe8e4;
+  --row-hover: rgba(255, 255, 255, 0.08);
+  --row-stripe: rgba(255, 255, 255, 0.035);
+  --sidebar-bg: linear-gradient(180deg, #1e272a 0%, #1a2326 100%);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-text: #dbe4e3;
+  /* 深色模式下侧栏文字是浅色，悬停/选中要换成对应的浅色系 */
+  --sidebar-hover-bg: rgba(255, 255, 255, .07);
+  --sidebar-hover-text: #ffffff;
+  --sidebar-active-text: var(--palette-gold-100);
+  /* 深色模式：金色收敛成香槟金，否则「系统」两字太扎眼 */
+  --title-gradient: linear-gradient(96deg,
+    #ffffff 0%, #f6f9f8 48%, #efe6cd 78%, #ddcfa4 100%);
+  --blur-layer-bg: rgba(12, 16, 18, 0.62);
+  --tooltip-bg: rgba(52, 66, 68, 0.96);
+  /* 深色模式背景已经压暗，金线不用那么用力，细一点、光晕收一点 */
+  --header-gold: #d9ae3c;
+  --header-gold-w: 3px;
+  --header-gold-glow: rgba(217, 174, 60, .28);
+  /* 深色模式下把麦田背景压暗，否则黑卡片压在亮黄底上非常刺眼 */
+  --bg-image-filter: saturate(0.75) brightness(0.34);
+  --bg-image-opacity: 1;
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
+  transition: background-color .25s ease, color .25s ease;
 }
 
-.home-block,table,
+/* 深色模式下背景跟随主题明暗变化。
+   注意：这里不要给 filter/opacity 加 transition。
+   加过之后实测会残留一个 progress=0 的过渡动画，把新值一直挡住，
+   连内联样式都盖不过它，表现为「深色模式背景不变暗」。
+   主题切换本来也不需要过渡，直接生效即可。 */
+html[data-theme="light"] .main-background {
+  filter: saturate(1.05) brightness(1);
+  opacity: 0.8;
+}
+html[data-theme="dark"] .main-background {
+  filter: saturate(0.75) brightness(0.32);
+  opacity: 1;
+}
+
+.home-block, table,
 .chart-wrapper {
   background-color: var(--box-bg) !important;
   color: var(--text-color);
+}
+
+/*-----------通用表单控件（深色模式下不再白底黑字）---------*/
+.page-home select,
+.page-details select,
+.page-history select,
+.page-history input,
+.page-settings select,
+.page-settings input {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  transition: border-color .2s ease, background-color .25s ease, color .25s ease;
+}
+
+.page-home select:focus,
+.page-details select:focus,
+.page-history select:focus,
+.page-history input:focus,
+.page-settings select:focus,
+.page-settings input:focus {
+  outline: none;
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px rgba(85, 137, 127, 0.25);
+}
+
+/* 深色模式下日历图标本身是黑的，反相一下才看得见 */
+html[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }
 
 
@@ -145,10 +396,12 @@ main{
   padding: 20px;
   padding-top: calc(var(--header-h) + 0px); /* ← 关键：预留 header 高度 */
   padding-bottom: var(--footer-h);
-  height: calc(100vh - 0px);
+  height: 100vh;
   overflow: hidden;  /* 只让内部 .main-data 滚动 */
   transition: margin-left .25s ease;
   z-index: 800;
+  display: flex;
+  flex-direction: column;
 }
 
 .footer{
@@ -177,13 +430,20 @@ main{
 }
 .footer a:hover{
   text-decoration:none;
-  color:#4096ff; 
+  color:var(--link-hover); 
 }
 
 /* 主内容容器 & 模糊层 */
 .main-data{
-  height:100%;
-  overflow-y:auto;                        /* 在这里滚动 */
+  /*
+   * 原来写的是 height:100%，但父级 main 有 padding-top，
+   * 百分比高度算不准，内容变高后滚动条跑到页面上、卡片下半截留白。
+   * 改成 flex 子项 + min-height:0，滚动就老老实实待在这个容器里。
+   */
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;                        /* 在这里滚动 */
+  overscroll-behavior: contain;            /* 滚到底不要把整个页面带着一起滚 */
   background:transparent;
   padding:20px;
   border-radius:8px;
@@ -198,12 +458,64 @@ main{
 .blur-layer{
   position:absolute; top:0; left:0; right:0; bottom:0;
   backdrop-filter:blur(5px);
-  -webkit-backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(5px);
   pointer-events:none; z-index:0;
-  background:rgba(202,202,202,.6);
+  background:var(--blur-layer-bg);
   border-radius:8px;
+  transition: background-color .25s ease;
 }
 .main-data > *:not(.blur-layer){ position:relative; z-index:1; }
+
+/*-----------分页控件（历史数据页）---------*/
+#pagination-controls{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;          /* 关键：不许换行 */
+  gap: 6px;
+  margin-top: 22px;
+  padding-bottom: 8px;
+}
+#pagination-controls .page-btn{
+  flex: 0 0 auto;
+  margin: 0;
+  min-width: 38px;
+  height: 36px;
+  padding: 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color);
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+#pagination-controls .page-btn:hover:not(:disabled){
+  background-color: var(--row-hover);
+  border-color: var(--accent-strong);
+}
+#pagination-controls .page-btn.is-active{
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+#pagination-controls .page-btn:disabled{
+  opacity: .45;
+  cursor: default;
+}
+#pagination-controls .page-ellipsis{
+  flex: 0 0 auto;
+  padding: 0 4px;
+  color: var(--muted-color);
+  user-select: none;
+}
+#pagination-controls .page-total{
+  flex: 0 0 auto;
+  margin-left: 10px;
+  font-size: 13px;
+  color: var(--muted-color);
+}
 
 @media (max-width: 500px) {
   header {
@@ -214,24 +526,31 @@ main{
     font-size: 20px;
     line-height: 64px;
     left: 16px;
-    width: auto;
+    /* 小屏文字窄，渐变金会糊成一团，直接用纯白 */
     background-image: none;
+    -webkit-text-fill-color: #ffffff;
+    width: auto;
+    max-width: 74vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
     text-indent: 0;
   }
 
-  header a,
-  header a1 {
-    font-size: 12px;
-    top: 8px;
-    right: auto;
-    left: 16px;
+  header .header-quote {
     display: none; /* 小屏隐藏副标题，避免过于拥挤 */
   }
 
+  /* 小屏时侧栏变成顶部横条，收起按钮改成贴在横条右侧的小页签 */
   #sidebar-toggle {
-    top: 14px;
-    left: 12px;
-    font-size: 18px;
+    top: 64px;
+    left: auto;
+    right: 0;
+    height: 32px;
+    width: 24px;
+    font-size: 14px;
+    border-radius: 8px 0 0 8px;
+    border-left: 1px solid var(--sidebar-border);
+    border-right: none;
   }
 
   .content {
@@ -240,7 +559,7 @@ main{
     left: 0;
     width: 100%;
     height: 32px; 
-    background-color: #a9a9a9;
+    background: var(--sidebar-bg);
     padding: 0;
     display: flex;
     justify-content: center;
@@ -279,7 +598,7 @@ main{
 
   .content nav ul li a.active,
   .content nav ul li a:hover {
-    background-color: #6f7f79;
+    background-color: var(--palette-teal-300);
     color: #fff;
   }
 
@@ -301,5 +620,32 @@ main{
     top: 64px;
     bottom:22px;
   }
+}
+
+/* ==========================================================================
+ * 共用提示条
+ *   .empty-hint          灰底虚线框：空状态
+ *   .empty-hint.err      红色：出错
+ *   .empty-hint.ok       绿色：正常
+ * 由 js/common/ui.js 的 setNotice() 生成，三个页面共用，不要再各自定义。
+ * ========================================================================== */
+.empty-hint{
+  margin-top: 16px;
+  padding: 26px 20px;
+  text-align: center;
+  color: var(--muted-color);
+  background: var(--card-bg);
+  border: 1px dashed var(--card-border);
+  border-radius: 10px;
+  font-size: 14px;
+}
+.empty-hint.err{
+  color: var(--danger);
+  border-color: rgba(217, 83, 79, .45);
+}
+.empty-hint.ok{
+  color: var(--ok);
+  border-color: rgba(63, 157, 109, .45);
+  font-weight: 600;
 }
   

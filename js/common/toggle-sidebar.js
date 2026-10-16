@@ -1,36 +1,39 @@
-export function initSidebarToggle(){
-  const btn  = document.getElementById('sidebar-toggle');
-  if(!btn) return;
+/**
+ * 侧栏收起/展开。
+ * 之前这里给 body 挂的是 'sidebar-open'，但 common.css 里生效的类名是 'sidebar-collapsed'，
+ * 两边对不上，所以按钮点了也没反应。现在统一由这里维护两个类。
+ */
+export function initSidebarToggle() {
+  const btn = document.getElementById('sidebar-toggle');
+  if (!btn) return;
 
   const isMobile = () => window.matchMedia('(max-width:768px)').matches;
 
-  const open  = () => {
-    document.body.classList.add('sidebar-open');
-    btn.setAttribute('aria-expanded', 'true');
-    localStorage.setItem('sidebarOpen', '1');
+  const render = (open) => {
+    document.body.classList.toggle('sidebar-open', open);
+    document.body.classList.toggle('sidebar-collapsed', !open);
+    btn.textContent = open ? '‹' : '›';
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? '收起导航' : '展开导航');
+    localStorage.setItem('sidebarOpen', open ? '1' : '0');
   };
-  const close = () => {
-    document.body.classList.remove('sidebar-open');
-    btn.setAttribute('aria-expanded', 'false');
-    localStorage.setItem('sidebarOpen', '0');
-  };
-  const toggle = () => (document.body.classList.contains('sidebar-open') ? close() : open());
 
-  btn.addEventListener('click', toggle);
+  const isOpen = () => document.body.classList.contains('sidebar-open');
+
+  btn.addEventListener('click', () => render(!isOpen()));
 
   const saved = localStorage.getItem('sidebarOpen');
   if (isMobile()) {
-    saved === '1' ? open() : close();
+    render(saved === '1');
   } else {
-    open();
+    render(true); // 桌面端默认展开
   }
 
-  window.matchMedia('(max-width:768px)').addEventListener('change', e=>{
-    if(e.matches){
-      const saved2 = localStorage.getItem('sidebarOpen');
-      saved2 === '1' ? open() : close();
-    }else{
-      open();
+  window.matchMedia('(max-width:768px)').addEventListener('change', (e) => {
+    if (e.matches) {
+      render(localStorage.getItem('sidebarOpen') === '1');
+    } else {
+      render(true);
     }
   });
 }

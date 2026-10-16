@@ -1,0 +1,20 @@
+{
+  "name": "vs-code",
+  "version": "1.0.0",
+  "main": "cassandra_server.js",
+  "scripts": {
+    "start": "node cassandra_server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cassandra-driver": "^4.8.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "uuid": "^11.1.0"
+  }
+}

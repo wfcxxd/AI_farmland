@@ -133,7 +133,7 @@ button[type="submit"] {
 }
 .login-icp a:hover{
   text-decoration:none;
-  color:#4096ff; 
+  color:var(--link-hover); 
 }
 
 @media (max-width: 500px) {

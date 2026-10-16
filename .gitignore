@@ -1,0 +1,19 @@
+# 依赖与构建产物
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 本地预览服务器（仅供开发时用假数据看效果，不属于部署内容）
+dev-server.js
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 临时文件
+*.tmp
+*.log

@@ -5,20 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>智慧农田监测系统</title>
 
+  <!-- 防主题闪烁：这段必须留在样式表之前、且保持同步执行（不能加 type="module"）。
+       主题原先是 JS 模块加载后才挂上的，而模块是延迟执行的，
+       浏览器已经先按浅色画了一帧，深色模式下切页面就会闪一下白。 -->
+  <script>
+    (function () {
+      try {
+        var T = ["light", "dark"], t = null;
+        try { t = new URLSearchParams(location.search).get("theme"); } catch (e) {}
+        if (T.indexOf(t) < 0) { try { t = localStorage.getItem("theme"); } catch (e) {} }
+        if (T.indexOf(t) < 0) t = "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../css/common.css">
   <link rel="stylesheet" href="../css/home.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" crossorigin="anonymous"></script>
 </head>
 <body  class="page-home">
   <header>
-
+    <button id="sidebar-toggle" type="button" aria-expanded="true" aria-controls="sidebar" aria-label="收起或展开导航">‹</button>
     <h1>欢迎使用智慧农田监测系统</h1>
-    <a>"I know you are an illusion</a>
-    <a1>So I have no need to lie"</a1>
+    <p class="header-quote">
+      <span>"I know you are an illusion</span>
+      <span>So I have no need to lie"</span>
+    </p>
   </header>
 
   <main>
-    <section class="content">
+    <section class="content" id="sidebar">
       <nav>
         <ul> 
           <li><a href="home.html" class="active">主页</a></li>
