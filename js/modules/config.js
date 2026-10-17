@@ -1,52 +1,27 @@
-/**
- * 网络层：后端地址、请求封装、返回格式兼容。
- *
- * 全站所有取数都走这里，页面里不要再直接写 fetch。
- */
+/* ============ config.js · 网络层：后端地址 / 请求封装 / 取数 ============ */
 import { mockFetch } from "./mock-api.js";
 
-/* ---------------------------------------------------------------
- * 可调参数
- * --------------------------------------------------------------- */
+/* 可调参数。改数值就是改这里 */
 export const NETWORK_CONFIG = {
-  /** 请求超时（毫秒）。后端不可达时浏览器默认会挂很久，
-   *  页面就一直停在「加载中」；8 秒拿不到响应就主动放弃。 */
-  timeout: 8000,
-
-  /** 图表页/主页单次取多少条。
-   *  图表只用最近 12 条，500 条足够还留了容错；取太多纯属浪费流量。 */
-  chartLimit: 500,
-
-  /** 历史页单次取多少条。
-   *  历史页要翻页，取少了页数太少；1000 是后端允许的上限。 */
-  historyLimit: 1000,
+  timeout: 8000,        // 请求超时（毫秒）
+  chartLimit: 500,      // 主页与图表页单次取多少条
+  historyLimit: 1000,   // 历史页单次取多少条（后端上限 1000）
 };
 
-/* ---------------------------------------------------------------
- * 后端地址
- *
- * 线上地址写在这里；从 localhost / 127.0.0.1 打开时自动改用同源地址，
- * 配合 dev-server.js 就能用假数据本地预览，不依赖线上后端。
- * --------------------------------------------------------------- */
+/* 后端地址。换服务器改这一行 */
 const PROD_API_BASE = "http://119.45.214.98:9000";
 
+/* 从本机打开时改用同源地址；要加新的本机域名，改这个判断 */
 const isLocalPreview =
   typeof location !== "undefined" &&
   (location.hostname === "localhost" || location.hostname === "127.0.0.1");
 
 export const API_BASE = isLocalPreview ? "" : PROD_API_BASE;
 
-/* ---------------------------------------------------------------
- * 演示模式（前端模拟后端）
- *
- * 原后端已停服，而 GitHub Pages 是纯静态托管、没有服务端，
- * 部署上去后页面会取不到数据。所以非 localhost 环境下默认改用
- * 前端生成的数据，保证打开就有内容、且会随时间更新。
- *
- * 网址参数（可叠加在任意页面上）：
- *   ?demo=1   强制开启模拟（本地开发时想验证也方便）
- *   ?demo=0   强制关闭，去请求真实后端
- * --------------------------------------------------------------- */
+/*
+ * 是否使用模拟数据。规则：本机默认关闭、线上默认开启，
+ * 可用网址参数强制切换：?demo=1 开启，?demo=0 关闭。
+ */
 const demoParam =
   typeof location !== "undefined"
     ? new URLSearchParams(location.search).get("demo")
@@ -59,13 +34,10 @@ export const USE_MOCK =
       ? true
       : !isLocalPreview;
 
-/* ---------------------------------------------------------------
- * 请求
- * --------------------------------------------------------------- */
+/* ============ 请求封装 ============ */
 
 /**
  * 带超时的 GET，返回解析后的 JSON。
- * 演示模式下直接返回本地生成的数据，不发网络请求。
  * @param {string} path 以 / 开头的接口路径
  */
 export async function fetchJSON(path, { timeout = NETWORK_CONFIG.timeout } = {}) {
@@ -90,14 +62,8 @@ export async function fetchJSON(path, { timeout = NETWORK_CONFIG.timeout } = {})
 }
 
 /**
- * 拉传感器数据，并兼容后端的两种返回格式。
- *
- * 后端为了限制单次返回量加了分页，返回可能是：
- *   1) 旧格式：直接是一个数组
- *   2) 新格式：{ rows: [...], nextPageState: ... }
- * 这里统一成数组，调用方不用关心后端用的是哪种。
- *
- * @param {number} limit 单次最多取多少条，默认取图表页的量
+ * 拉传感器数据。兼容后端两种返回格式：纯数组，或 { rows: [...] }。
+ * @param {number} limit 单次最多取多少条
  */
 export async function fetchSensorData(limit = NETWORK_CONFIG.chartLimit) {
   const json = await fetchJSON(`/all_sensor_data?limit=${limit}`);

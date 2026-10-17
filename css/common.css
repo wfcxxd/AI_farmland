@@ -1,17 +1,15 @@
+/* ============ common.css · 公共样式：颜色令牌 / 布局 / 顶栏 / 侧栏 / 表单 ============ */
+
 /* ==========================================================================
- * 分两层管理颜色，改配色只看这一段就够了
- *
- *   第一层 --palette-*  ：原始色板。只在这里写具体色值。
- *   第二层 语义令牌      ：描述用途（主色/强调色/危险色…），引用第一层。
- *
- * 想换主色调？改 --palette-green-* 那几个值，全站跟着变。
- * 想换警示色？改 --palette-danger。
- * 各文件里一律用语义令牌，不要再写 #xxxxxx。
+ * 颜色分两层
+ *   第一层 --palette-*：原始色板，只有这里写具体色值
+ *   第二层 语义令牌：按用途命名（--brand / --accent / --danger …），引用第一层
+ * 各文件一律用语义令牌，不要写裸色值。
  * ========================================================================== */
 
 :root{
-  --header-h: 125px;
-  --footer-h: 40px;
+  --header-h: 125px;   /* 顶栏高度，改这里调顶栏高矮 */
+  --footer-h: 40px;    /* 页脚高度 */
   --sidebar-w: clamp(140px, 18vw + 20px, 260px); /* 桌面侧栏宽度 */
   --sidebar-w-mobile: 80vw;                      /* 移动端展开宽度 */
   --sidebar-edge: var(--sidebar-w);              /* 侧栏右边缘位置，收起时归零 */
@@ -119,12 +117,10 @@ header {
 }
 header h1 {
   /*
-   * 白 → 金 的渐变字，金色收尾呼应底部金线。
-   * 注意两个坑：
-   * 1) 必须用 width: max-content，否则渐变按盒宽算，
-   *    文字只占前面一半，会在字中间突然变金；
-   * 2) 金色段要留给末尾约 1/4，渐变才自然。
-   * 具体渐变值按主题走 --title-gradient。
+   * 白 → 金渐变字。
+   * width 必须是 max-content：渐变按元素宽度计算，
+   * 宽度取满会让金色段落在文字中间。
+   * 渐变值按主题走 --title-gradient。
    */
   width: max-content;
   max-width: 62vw;
@@ -140,7 +136,7 @@ header h1 {
   line-height: 125px;
   left: 100px;
 }
-/* 原来是两个自定义标签 <a>/<a1>，换成标准元素 */
+/* 顶栏右侧引言 */
 .header-quote {
   position: absolute;
   right: 8vw;
@@ -178,10 +174,8 @@ header h1 {
   opacity: .3;
   cursor: pointer;
   /*
-   * 注意：这里绝对不能写 transition: left。
-   * 实测一旦加成过渡，会残留一个 progress=0 的动画把 left 锁死在初值上
-   * （连内联 left 都盖不过去），收起侧栏后按钮仍停在原来的边缘位置。
-   * 侧栏本身已有宽度动画，按钮跟着走即可，不需要再过渡。
+   * 不要给 left 加 transition：会残留一个动画把位置锁在初值上。
+   * 侧栏本身有宽度动画，按钮跟随即可。
    */
   transition: opacity .2s ease, background-color .2s ease, color .2s ease, border-color .2s ease;
 }
@@ -244,7 +238,7 @@ header h1 {
 
 body.sidebar-collapsed{
   --sidebar-w: 0px;
-  /* 侧栏收起后，收起按钮要跟着贴到最左边，否则会停在原来的边缘上 */
+  /* 侧栏收起后收起按钮贴到最左边 */
   --sidebar-edge: 0px;
 }
 body.sidebar-collapsed .content{
@@ -359,7 +353,7 @@ html[data-theme="dark"] .main-background {
   color: var(--text-color);
 }
 
-/*-----------通用表单控件（深色模式下不再白底黑字）---------*/
+/*-----------通用表单控件---------*/
 .page-home select,
 .page-details select,
 .page-history select,
@@ -436,9 +430,9 @@ main{
 /* 主内容容器 & 模糊层 */
 .main-data{
   /*
-   * 原来写的是 height:100%，但父级 main 有 padding-top，
-   * 百分比高度算不准，内容变高后滚动条跑到页面上、卡片下半截留白。
-   * 改成 flex 子项 + min-height:0，滚动就老老实实待在这个容器里。
+   * 用 flex 子项 + min-height:0 撑高度。
+   * 不要改回 height:100%：父级 main 有 padding-top，百分比高度算不准，
+   * 滚动条会跑到页面上、卡片下半截留白。
    */
   flex: 1 1 auto;
   min-height: 0;

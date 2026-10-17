@@ -1,18 +1,18 @@
+/* ============ settings.js · 设置项的读写与阈值判断 ============ */
 import { applyTheme, saveTheme, getTheme } from "../common/theme.js";
 
+/* 默认值。用户没改过设置时用这里，改默认值就改这几行 */
 const defaultSettingsLocal = {
-  refreshInterval: 30, // 单位：分钟
-  theme: "light",
-  tempThreshold: 35.0,
-  humThreshold: 70.0,
+  refreshInterval: 30, // 刷新间隔，单位分钟
+  theme: "light",      // 默认主题：light / dark
+  tempThreshold: 35.0, // 温度告警阈值（℃），超过即告警
+  humThreshold: 70.0,  // 湿度告警阈值（%），低于即告警
 };
 
 /**
  * 读一个数值设置，非法值回落到默认。
- *
- * 注意：localStorage 没存过时 getItem 返回 null，而 Number(null) === 0，
- * 所以必须先判 null —— 否则新浏览器（或清过缓存）下阈值会静默变成 0，
- * 温度一超过 0℃ 就报「已超限」，湿度阈值变成 0 又永远不告警。
+ * 必须先判 null：localStorage 没存过时 getItem 返回 null，
+ * 而 Number(null) === 0，会被当成合法的 0。
  */
 function readNumber(key) {
   const raw = localStorage.getItem(key);
@@ -28,11 +28,7 @@ export function getRefreshIntervalMs() {
   return safe * 60 * 1000;
 }
 
-/* ---------------------------------------------------------------
- * 报警阈值的读写接口。
- * 主页的仪表盘用它们来判断是否告警，这样「设置页改阈值 → 主页生效」
- * 走的是同一份数据（localStorage），不需要额外的状态管理。
- * --------------------------------------------------------------- */
+/* 报警阈值接口。设置页和主页读的是同一份 localStorage 数据。 */
 
 /** 温度报警阈值（℃）：超过即告警 */
 export function getTempThreshold() {

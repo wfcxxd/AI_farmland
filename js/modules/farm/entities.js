@@ -1,86 +1,125 @@
-/**
- * 会随时间变化的东西：作物和粒子。
- *
- * 作物不是手绘 N 个成长阶段，而是按成长度 g（0~1）程序化画出来：
- * 茎变高 → 长叶 → 抽穗 → 转金黄。想调成长曲线只改下面的数字。
- *
- * 粒子用于三种效果：播种扬土（dust）、浇水水珠（drop）、收割谷粒（chaff）。
- */
+/* ============ entities.js · 作物与粒子 ============ */
+/* 作物按成长度 0~1 画成一簇叶子：小芽 → 展叶 → 茂密 → 成熟金黄 */
 import { CANVAS } from "./constants.js";
 
 const { H } = CANVAS;
 
-/* ---------------------------------------------------------------
- * 作物配色
- * 注意：这些颜色必须比田地本身亮不少，否则会完全糊进土里。
- * 实测田地在正午约为 rgb(118,115,59)，所以作物用更亮更饱和的黄绿。
- * --------------------------------------------------------------- */
+/* 作物配色。要比田地亮，否则会糊进土里 */
 const CROP_COLORS = {
-  leafYoung: "#6fc247",   // 幼苗叶
-  leafMid: "#8fd45c",     // 中期叶
-  leafRipe: "#f4d76a",    // 成熟叶/穗（金黄）
-  stemYoung: "#4d8a2c",
-  stemMid: "#5da233",
-  stemRipe: "#c9a83e",
-  grainHighlight: "#fff0b8", // 成熟谷粒高光
+  leafYoung: "#8fd45c",
+  leafMid: "#6fc247",
+  leafHighlight: "#c3ea8a",
+  leafDark: "#4d8a2c",
+  leafRipe: "#e8c95a",
+  leafRipeHighlight: "#f7e08a",
+  leafRipeDark: "#a8862a",
+  fruit: "#fff6d0",
 };
 
-/** 成长度到 0.72 以上就算成熟（颜色转金黄） */
+/* 成熟阈值：成长度超过它颜色转金黄。改这里调整成熟时机 */
 const RIPE_AT = 0.72;
 
+/** 稳定伪随机（0~1），同一个种子每次结果相同 */
+function hash(a, b) {
+  const n = Math.sin(a * 127.1 + b * 311.7) * 43758.5453;
+  return n - Math.floor(n);
+}
+
 /**
- * 画一株作物
- *
- * @param {number} x      根部 x
- * @param {number} baseY  根部 y（作物往上长）
- * @param {number} g      成长度 0~1
+ * 画一簇叶子
+ * @param {number} rad 半径（1~3）
+ * @param {number} seed 每株的种子，决定边缘镂空位置
  */
-export function drawPlant(ctx, x, baseY, g) {
-  if (g <= 0) return;
-  x = Math.round(x);
-  baseY = Math.round(baseY);
+function drawBlob(ctx, x, y, rad, leaf, dark, seed) {
+  // 由半径决定轮廓：半径越大越接近圆
+  for (let dy = -rad; dy <= rad; dy++) {
+    for (let dx = -rad; dx <= rad; dx++) {
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d > rad + 0.35) continue;
 
-  const ripe = g > RIPE_AT;
-  const leaf = ripe ? CROP_COLORS.leafRipe : g > 0.45 ? CROP_COLORS.leafMid : CROP_COLORS.leafYoung;
-  const stem = ripe ? CROP_COLORS.stemRipe : g > 0.45 ? CROP_COLORS.stemMid : CROP_COLORS.stemYoung;
+      // 边缘像素按种子随机镂空，做出不规则外形
+      const edge = d > rad - 0.6;
+      if (edge && hash(seed + dx * 3.1, seed + dy * 5.7) > 0.62) continue;
 
-  // 刚破土：只露一个小芽
-  if (g < 0.14) {
-    ctx.fillStyle = leaf;
-    ctx.fillRect(x, baseY - 1, 2, 1);
-    return;
-  }
-
-  // 茎
-  const hgt = Math.max(2, Math.round(g * 8));
-  ctx.fillStyle = stem;
-  ctx.fillRect(x, baseY - hgt, 1, hgt);
-
-  // 叶（两侧各一片，错开一格显得有层次）
-  if (g > 0.3) {
-    const ly = baseY - Math.round(hgt * 0.55);
-    ctx.fillStyle = leaf;
-    ctx.fillRect(x - 2, ly, 2, 1);
-    ctx.fillRect(x + 1, ly + 2, 2, 1);
-  }
-
-  // 穗：成熟后更饱满并加高光
-  if (g > 0.55) {
-    ctx.fillStyle = leaf;
-    ctx.fillRect(x - 1, baseY - hgt - 3, 3, 3);
-    if (ripe) {
-      ctx.fillStyle = CROP_COLORS.grainHighlight;
-      ctx.fillRect(x - 1, baseY - hgt - 3, 3, 1);
-      ctx.fillStyle = CROP_COLORS.leafRipe;
-      ctx.fillRect(x, baseY - hgt, 1, 1);
+      // 左上受光、右下背光
+      const lit = -dx - dy;
+      ctx.fillStyle = lit > rad * 0.5 ? leaf : lit < -rad * 0.4 ? dark : leaf;
+      ctx.fillRect(x + dx, y + dy, 1, 1);
     }
   }
 }
 
-/* ---------------------------------------------------------------
- * 粒子
- * 每个粒子是一个带速度的小点，生命值 1 -> 0 逐渐淡出。
- * --------------------------------------------------------------- */
+/**
+ * 画一株作物。改下面 rad 的分档可调整各阶段大小
+ * @param {number} x      株心 x
+ * @param {number} y      株心 y
+ * @param {number} g      成长度 0~1
+ * @param {number} seed   每株的种子
+ */
+export function drawPlant(ctx, x, y, g, seed = 0) {
+  if (g <= 0) return;
+  x = Math.round(x);
+  y = Math.round(y);
+
+  const ripe = g > RIPE_AT;
+  const leaf = ripe ? CROP_COLORS.leafRipe : g > 0.45 ? CROP_COLORS.leafMid : CROP_COLORS.leafYoung;
+  const dark = ripe ? CROP_COLORS.leafRipeDark : CROP_COLORS.leafDark;
+  const shine = ripe ? CROP_COLORS.leafRipeHighlight : CROP_COLORS.leafHighlight;
+
+  // 刚破土：一个小芽
+  if (g < 0.16) {
+    ctx.fillStyle = leaf;
+    ctx.fillRect(x, y - 1, 1, 2);
+    return;
+  }
+
+  // 幼苗：一对小叶
+  if (g < 0.34) {
+    ctx.fillStyle = leaf;
+    ctx.fillRect(x, y, 1, 1);
+    if (hash(seed, 1) > 0.35) ctx.fillRect(x - 1, y - 1, 1, 1);
+    if (hash(seed, 2) > 0.35) ctx.fillRect(x + 1, y - 1, 1, 1);
+    ctx.fillStyle = dark;
+    ctx.fillRect(x - 1, y + 1, 1, 1);
+    return;
+  }
+
+  // 成长中 / 成熟：叶簇随成长度变大
+  const rad = g < 0.5 ? 1 : g < 0.66 ? 2 : ripe ? 3 : 2;
+  drawBlob(ctx, x, y, rad, leaf, dark, seed);
+
+  // 几根伸出来的叶尖，打破圆形轮廓
+  ctx.fillStyle = leaf;
+  const tips = rad >= 2 ? 3 : 2;
+  for (let i = 0; i < tips; i++) {
+    const a = hash(seed, i + 11) * Math.PI * 2;
+    const len = rad + 1 + Math.floor(hash(seed, i + 21) * 2);
+    ctx.fillRect(
+      Math.round(x + Math.cos(a) * len),
+      Math.round(y + Math.sin(a) * len),
+      1,
+      1
+    );
+  }
+
+  // 受光高光
+  if (rad >= 2) {
+    ctx.fillStyle = shine;
+    ctx.fillRect(x - 1, y - 1, 1, 1);
+  }
+
+  // 成熟：加几粒饱满的果实
+  if (ripe) {
+    ctx.fillStyle = CROP_COLORS.fruit;
+    for (let i = 0; i < 3; i++) {
+      const a = hash(seed, i + 31) * Math.PI * 2;
+      const r = 1 + hash(seed, i + 41) * 1.6;
+      ctx.fillRect(Math.round(x + Math.cos(a) * r), Math.round(y + Math.sin(a) * r), 1, 1);
+    }
+  }
+}
+
+/* 粒子：播种扬土 dust / 浇水水珠 drop / 收割谷粒 chaff */
 const PARTICLE_COLORS = {
   drop: "rgba(150,214,236,",   // 水珠
   chaff: "rgba(240,198,74,",   // 谷粒

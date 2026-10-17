@@ -1,3 +1,4 @@
+/* ============ home.js · 主页仪表盘：指标 / 告警 / 传感器状态 ============ */
 import { initFarmScene } from "./farm/scene.js";
 import { fetchSensorData, NETWORK_CONFIG } from "./config.js";
 import { getThresholds, getRefreshIntervalMs } from "./settings.js";
@@ -31,7 +32,7 @@ export function showHome(container) {
       <canvas class="farm-canvas"></canvas>
       <div class="farm-overlay">
         <span class="farm-badge">实时农事</span>
-        <span class="farm-caption">日出 · 准备下地</span>
+        <span class="farm-caption">清晨 · 准备下地</span>
       </div>
       <div class="farm-progress-track"><div class="farm-progress"></div></div>
     </section>
@@ -72,6 +73,7 @@ export function showHome(container) {
 export function startHomeAutoRefresh() {
   if (homeTimer) return;
   // 用「设置」页里的刷新间隔
+  // 刷新间隔取自设置页；这里 5000 是最小间隔（毫秒），改它限制最快刷新频率
   const ms = Math.max(5000, getRefreshIntervalMs());
   homeTimer = setInterval(refreshDashboard, ms);
 }
@@ -182,7 +184,7 @@ function render(data) {
   } else {
     alarmBlock.classList.add("has-alarm");
     document.getElementById("alarmList").innerHTML = alarms
-      .slice(0, 6)
+      .slice(0, 6)   // 最多显示 6 条告警，改这个数调整条数
       .map(
         (a) => `
       <div class="alarm-item ${a.kind}">

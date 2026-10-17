@@ -1,3 +1,4 @@
+/* ============ home-entry.js · 主页入口：挂载仪表盘与农田动画 ============ */
 import { applyTheme } from "../common/theme.js";
 import { insertMainBackground } from "../common/background-helper.js";
 import { initSidebarToggle } from "../common/toggle-sidebar.js";

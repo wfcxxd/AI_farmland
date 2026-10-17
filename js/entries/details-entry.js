@@ -1,3 +1,4 @@
+/* ============ details-entry.js · 数据图表页入口 ============ */
 import { applyTheme } from "../common/theme.js";
 import { insertMainBackground } from "../common/background-helper.js";
 import { initSidebarToggle } from "../common/toggle-sidebar.js";

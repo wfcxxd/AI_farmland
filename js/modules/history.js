@@ -1,8 +1,10 @@
+/* ============ history.js · 历史数据页：筛选 + 分页表格 ============ */
 import { fetchSensorData, NETWORK_CONFIG } from "./config.js";
 import { MSG } from "../common/messages.js";
 import { setNotice } from "../common/ui.js";
 
 let currentPage = 1;
+/* 每页显示多少行。改这里调整分页密度 */
 const rowsPerPage = 12;
 
 /** 把任意值转成数字；空值/非法值一律返回 null */
@@ -36,8 +38,7 @@ export async function showHistoryData(container) {
 
     /*
      * 每条记录同时保留「展示用字符串」和「筛选用原始数值」。
-     * 之前是拿 parseFloat(显示字符串) 再比较，遇到空值会算出 NaN；
-     * 分开存之后筛选更准，也顺手解决了 null 的处理。
+     * 筛选要用数字比较，不要拿显示字符串再 parse 回来（空值会算出 NaN）。
      */
     const data = rawData.map((row) => {
       const ts = row.timestamp || row.time;
@@ -261,8 +262,7 @@ function renderPaginatedTable(container, fullData) {
 
 /**
  * 渲染分页控件。
- * 原来是把所有页码一次性全渲染出来（576 条 ÷ 12 = 48 页），
- * 按钮排不下就换行。现在只显示当前页附近的窗口，两端补省略号。
+ * 只显示当前页附近的页码，两端补省略号。
  */
 function renderPagination(paginationContainer, container, fullData, totalPages, totalRows) {
   if (totalPages <= 1) {

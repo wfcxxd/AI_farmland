@@ -1,8 +1,4 @@
-/**
- * 侧栏收起/展开。
- * 之前这里给 body 挂的是 'sidebar-open'，但 common.css 里生效的类名是 'sidebar-collapsed'，
- * 两边对不上，所以按钮点了也没反应。现在统一由这里维护两个类。
- */
+/* ============ toggle-sidebar.js · 侧栏收起 / 展开 ============ */
 export function initSidebarToggle() {
   const btn = document.getElementById('sidebar-toggle');
   if (!btn) return;

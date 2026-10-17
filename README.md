@@ -20,16 +20,6 @@ NB-IoT 模块 --UDP:9001--> cassandra_server --+--> sensor_data
 
 NB 模块上报纸文格式：`VDD=3210 T=26C H=57% L=123`（可选 `ID=NODE1` 指定传感器编号）。
 
-## 页面
-
-| 页面 | 文件 | 内容 |
-| --- | --- | --- |
-| 登录 | `index.html` | 账号 `admin` / `123456` |
-| 主页 | `html/home.html` | 像素农田动画 + 四指标概览 + 阈值告警 + 传感器状态 |
-| 数据图表 | `html/details.html` | 传感器选择、四指标状态条、2×2 折线图（Chart.js） |
-| 历史数据 | `html/history.html` | 可折叠筛选（传感器/日期/四指标区间）+ 分页表格 |
-| 设置 | `html/settings.html` | 主题、刷新间隔、温度/湿度报警阈值 |
-
 
 ## 演示模式（模拟后端）
 
@@ -38,13 +28,6 @@ NB 模块上报纸文格式：`VDD=3210 T=26C H=57% L=123`（可选 `ID=NODE1` �
 效果和真实后端一致：**4 个传感器 × 最近 24 小时，每 10 分钟一条，共 576 条**，
 数值随昼夜变化（白天温度高、湿度低、光照强）。
 
-- **GitHub Pages 上线后自动启用**，无需任何配置
-- 本机 `localhost` 开发时不启用，走真实接口（或用 `dev-server.js` 的假接口）
-- 也可用网址参数手动控制：`?demo=1` 强制开启，`?demo=0` 强制关闭
-
-数据的时间锚定在「当前分钟」，所以每次自动刷新，页面上的「更新于 xx:xx」都会
-往前走，看得出是活的。
-
 ## 项目结构
 
 ```
@@ -52,7 +35,7 @@ NB 模块上报纸文格式：`VDD=3210 T=26C H=57% L=123`（可选 `ID=NODE1` �
 ├── index.html / index.js / index.css   登录页
 ├── html/          四个内页
 ├── css/
-│   ├── common.css     ← 颜色令牌、布局、顶栏侧栏都在这里
+│   ├── common.css     
 │   ├── home.css       主页
 │   ├── details.css    数据图表页
 │   ├── history.css    历史数据页
@@ -74,5 +57,5 @@ NB 模块上报纸文格式：`VDD=3210 T=26C H=57% L=123`（可选 `ID=NODE1` �
 │       ├── history.js    历史数据页
 │       └── farm/         像素农田动画
 ├── images/ music/ 素材
-└── server/        Cassandra + Express 后端
+└── server/       
 ```

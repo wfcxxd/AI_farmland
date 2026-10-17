@@ -1,3 +1,4 @@
+/* ============ details.js · 数据图表页：状态条 + 四张折线图 ============ */
 import { fetchSensorData, NETWORK_CONFIG } from "./config.js";
 import { THEME_EVENT } from "../common/theme.js";
 import { getThresholds } from "./settings.js";
@@ -8,13 +9,14 @@ const chartsCache = {};
 let detailsTimer = null;
 let scrollHost = null;
 
-/** 最近渲染用的数据窗口大小（图表显示多少条） */
+/* 图表显示最近多少条。改这个数调整横轴跨度 */
 const WINDOW_SIZE = 12;
 
 /** 全部读数，供状态条与图表共用 */
 let allData = [];
 
-/* 四个指标的定义，渲染、刷新、换主题都复用这一份 */
+/* 四个指标的定义。增删指标、改单位小数位、改线条颜色都改这里
+   （key 用于内部索引，field 对应接口字段，digits 是显示几位小数） */
 const CHART_META = [
   { key: "temp", field: "temperature", title: "温度", unit: "℃", digits: 1, stroke: "#ff6384", fill: "rgba(255,99,132,0.16)" },
   { key: "hum", field: "humidity", title: "湿度", unit: "%", digits: 1, stroke: "#36a2eb", fill: "rgba(54,162,235,0.16)" },
@@ -299,9 +301,8 @@ function createChartBlock(title, canvasId) {
 }
 
 function drawLineChart(canvas, labels, data, unit, borderColor, fillColor) {
-  // 注意：这里必须直接收 canvas 元素。
-  // 之前用 document.getElementById(canvasId) 反查，但此时 canvas 还挂在
-  // 尚未插入文档的容器里，反查会返回 null，图就画不出来。
+  // 必须直接收 canvas 元素：调用时它还在未插入文档的容器里，
+  // 用 getElementById 反查会拿到 null。
   if (!canvas) return null;
   const ctx = canvas.getContext("2d");
   const theme = readChartTheme();
@@ -316,13 +317,8 @@ function drawLineChart(canvas, labels, data, unit, borderColor, fillColor) {
           label: unit,
           data,
           borderColor,
-          /*
-           * 原来这里塞的是 createDiagonalPattern() 生成的斜线图案，
-           * 再叠加一个 beforeDraw 插件往画布上刷 rgba(99,99,99,.34) 灰底 ——
-           * 那层灰底同时把 tooltip 压在了下面，所以"加了背景就看不到数据"。
-           * 现在图案和插件都删掉，只留一个淡色填充，
-           * 卡片背景交给 .chart-wrapper 的 CSS 管。
-           */
+          /* 淡色填充即可。不要给画布铺不透明底色或加 beforeDraw 插件，
+             那会把 tooltip 压在下面，看不到数据。 */
           backgroundColor: fillColor,
           borderWidth: 2,
           fill: true,
@@ -339,9 +335,8 @@ function drawLineChart(canvas, labels, data, unit, borderColor, fillColor) {
       responsive: true,
       maintainAspectRatio: false,
       /*
-       * 关掉入场动画：图表每 30 秒轮询刷新一次，动画只是白等；
-       * 而且 rAF 驱动的动画在无头浏览器/后台标签页里不推进，
-       * 会导致画布一直是空的（截图时就踩到了这个坑）。
+       * 关掉入场动画：图表定时刷新，动画没有意义；
+       * 而且动画在后台标签页/无头浏览器里不推进，画布会一直是空的。
        */
       animation: false,
       /* 鼠标不用正好压在点上，靠近也能出提示 */

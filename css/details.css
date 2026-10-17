@@ -1,3 +1,5 @@
+/* ============ details.css · 数据图表页：工具条 + 状态条 + 图表网格 ============ */
+
 .main-data {
   display: flex;
   flex-direction: column;

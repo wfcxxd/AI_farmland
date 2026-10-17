@@ -1,3 +1,5 @@
+/* ============ history.css · 历史数据页：筛选 + 表格 + 分页 ============ */
+
 /* 筛选区 */
 #filter-controls{
   display: flex;
@@ -73,8 +75,8 @@
 .chip-all{ color: var(--text-color); }
 
 /*
- * 用 CSS Grid 对齐，不再靠 flex + min-width 撑：
- * 每行两栏，「标签 + 控件」列宽固定，区间行就能左右对齐了。
+ * 筛选行用 Grid 对齐：每行两栏，「标签 + 控件」列宽固定，
+ * 区间输入就能左右对齐。
  */
 .filter-row{
   display: grid;
@@ -224,7 +226,7 @@ tbody tr:hover{
     text-align: center;
   }
 
-  /* 小屏全部改成单列，标签在控件上方，不再挤成一团 */
+  /* 小屏改成单列，标签在控件上方 */
   .filter-row,
   .filter-row-inline{
     grid-template-columns: minmax(0, 1fr);

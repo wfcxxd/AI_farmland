@@ -1,22 +1,21 @@
-/* ===== 农田动态展示区（像素风动画） ===== */
+/* ============ home.css · 主页：农田动画 + 仪表盘 ============ */
+
+/* ===== 农田动态展示区（俯视像素风） ===== */
 .farm-showcase{
   position: relative;
   width: 100%;
-  /* 比例必须等于逻辑画布的 W/H（320/116 ≈ 2.76），放大后像素才是方的、人物不会被压扁。
-     不要再加 max-height —— 会把高度卡住、破坏这个比例，画面被纵向拉伸。
-     想调高矮就同时改这里的比例和 farm-scene.js 里的 H。 */
-  /* 展示区比例。这个值决定横幅高矮：
-     取 320/116（=2.76）像素最方正，但会把下面三个区块挤出首屏；
-     这里取 3.42 让它更扁，好让仪表盘完整落在首屏内。
-     像素会有约 19% 的纵向拉伸，对像素画里的山、田、云看不出来，
-     农民会略高一点点。想恢复方正就把下面改回 80 / 29。 */
-  aspect-ratio: 3.42;
+  max-width: 660px;     /* 动画展示区的最大宽度，改这里放大 / 缩小画面 */
+  margin: 0 auto 20px;
+
+  /* 必须等于画布逻辑尺寸 320/96，否则像素会被拉成非正方形。
+     改画布尺寸时两处一起改；不要加 max-height，会破坏这个比例。 */
+  aspect-ratio: 320 / 96;
+
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid var(--card-border);
   box-shadow: var(--card-shadow);
-  background: #0e1420;              /* 动画加载前的底色，避免闪白 */
-  margin-bottom: 20px;
+  background: #6f8a4e;              /* 加载前的底色，取草地绿，避免闪白 */
 }
 .farm-canvas{
   display: block;
@@ -51,8 +50,13 @@
   font-size: 13px;
   font-weight: 600;
   color: #fff;
-  text-shadow: 0 1px 3px rgba(0,0,0,.6);
   letter-spacing: .5px;
+  /* 底纹半透明胶囊：场景里有树和房子，纯文字压上去会看不清 */
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(24, 38, 26, .55);
+  backdrop-filter: blur(2px);
+  text-shadow: 0 1px 2px rgba(0,0,0,.5);
 }
 
 /* 底部进度条：显示当前在一个完整农事周期里的位置 */
@@ -68,7 +72,7 @@
   background: linear-gradient(90deg, var(--gold), var(--palette-gold-100));
 }
 
-/* 布局容器：仪表盘用「一行三列」，比原来的 2×2 更省竖向空间 */
+/* 布局容器：仪表盘一行三列 */
 .home-grid {
   display: grid;
   grid-template-areas: "a b c";

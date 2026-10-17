@@ -1,4 +1,4 @@
-/* ===== 设置页 ===== */
+/* ============ settings.css · 设置页 ============ */
 
 .settings-title{
   margin: 0 0 18px;
@@ -6,7 +6,7 @@
   color: var(--text-color-strong);
 }
 
-/* 每个板块一张卡片，原来所有控件挤在左上角、下面留一大片空白 */
+/* 设置项分组卡片 */
 .settings-card{
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -105,14 +105,8 @@
   position: absolute; top: 24px; left: 34px; right: 8px; height: 22px;
   border-radius: 4px;
 }
-/*
- * 主题卡片里那个迷你界面缩略图。
- *
- * 这里是本文件里唯一「刻意写死色值」的地方：
- * 它要同时画出浅色和深色两套配色（不管当前用的是哪套），
- * 所以不能引用随主题变化的令牌，必须固定。
- * 改主题配色时若想让缩略图跟上，需要同步改这里的四个值。
- */
+/* 主题卡片里的迷你界面缩略图。
+   要同时画出浅色和深色两套，所以这里的色值必须写死，不能引用主题令牌。 */
 .theme-preview-light{ background: #f4f7f6; }
 .theme-preview-light .tp-side{ background: #dfe5e3; }
 .theme-preview-light .tp-block{ background: #ffffff; border: 1px solid #d3dcda; }

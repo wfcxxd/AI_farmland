@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>智慧农田监测系统</title>
 
-  <!-- 防主题闪烁：这段必须留在样式表之前、且保持同步执行（不能加 type="module"）。
-       主题原先是 JS 模块加载后才挂上的，而模块是延迟执行的，
-       浏览器已经先按浅色画了一帧，深色模式下切页面就会闪一下白。 -->
+  <!-- 主题初始化：必须在样式表之前、同步执行（不能加 type="module"），
+       否则深色模式下会先按浅色绘制一帧，切页面时闪白。 -->
   <script>
     (function () {
       try {
